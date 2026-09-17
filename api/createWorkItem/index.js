@@ -83,8 +83,12 @@ module.exports = async function (context, req) {
     { op: 'add', path: '/fields/System.Title', value: title },
     { op: 'add', path: '/fields/System.Description', value: htmlDescription },
     { op: 'add', path: '/fields/Microsoft.VSTS.Common.Priority', value: PRIORITY_MAP[priority] },
-    { op: 'add', path: '/fields/System.Tags', value: ['Helpdesk', requestType, priority].join('; ') },
   ];
+  // Tags are added only if the PAT/user has "Create tag definition" permission.
+  // Set ADD_TAGS=true in app settings once that permission is granted.
+  if (process.env.ADD_TAGS === 'true') {
+    patch.push({ op: 'add', path: '/fields/System.Tags', value: ['Helpdesk', requestType, priority].join('; ') });
+  }
   if (TEAM_LEAD_EMAIL) {
     patch.push({ op: 'add', path: '/fields/System.AssignedTo', value: TEAM_LEAD_EMAIL });
   }
