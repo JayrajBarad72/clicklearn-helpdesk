@@ -138,9 +138,11 @@
   function signIn(){
     const btn=document.getElementById('msBtn');
     btn.classList.add('loading');
-    document.getElementById('btnTxt').textContent='Redirecting to Microsoft…';
-    // Azure Static Web Apps + Entra ID sign-in, returns to the request wizard:
-    window.location.href='/.auth/login/aad?post_login_redirect_uri=/request';
+    document.getElementById('btnTxt').textContent='Opening helpdesk…';
+    // TEST MODE (Free plan): no sign-in yet — go straight to the wizard.
+    // Production restores Entra ID sign-in:
+    //   window.location.href='/.auth/login/aad?post_login_redirect_uri=/request';
+    setTimeout(()=>{ window.location.href='/request'; },500);
   }
 </script>
 </body>

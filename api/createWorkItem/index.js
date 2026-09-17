@@ -47,10 +47,17 @@ module.exports = async function (context, req) {
     return;
   }
 
-  const user = getSignedInUser(req);
+  let user = getSignedInUser(req);
   if (!user) {
-    context.res = { status: 401, jsonBody: { error: 'Not signed in.' } };
-    return;
+    // TEST MODE (Free plan, no auth configured yet): allow submissions with a
+    // placeholder requester so the flow can be verified. Set ALLOW_ANONYMOUS=true
+    // in app settings to enable. REMOVE it in production once Entra ID sign-in is on.
+    if (process.env.ALLOW_ANONYMOUS === 'true') {
+      user = { email: 'test@clicklearn.com', name: 'Helpdesk Portal (test)' };
+    } else {
+      context.res = { status: 401, jsonBody: { error: 'Not signed in.' } };
+      return;
+    }
   }
 
   const body = req.body || {};
