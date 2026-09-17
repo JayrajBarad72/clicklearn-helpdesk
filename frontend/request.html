@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClickLearn Helpdesk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-0:#06132b;--navy-1:#0b2145;--navy-2:#12305a;
+    --green:#2f84c2;--green-bright:#4d98ce;--green-deep:#2873cc;
+    --blue:#5aa6d8;--blue-deep:#2873cc;
+    --ink:#eaf1fb;--ink-soft:#a9bcd6;--ink-faint:#6d82a3;
+    --line:rgba(47,132,194,0.20);--line-soft:rgba(169,188,214,0.12);
+    --glass:rgba(15,40,80,0.42);--glass-strong:rgba(12,32,64,0.72);
+    --radius:18px;--font-display:'Sora',sans-serif;--font-body:'Inter',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:var(--font-body);background:var(--navy-0);color:var(--ink);min-height:100vh;overflow-x:hidden;position:relative;-webkit-font-smoothing:antialiased}
+  .aurora{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+  .aurora span{position:absolute;border-radius:50%;filter:blur(90px);opacity:.55;mix-blend-mode:screen;will-change:transform}
+  .a1{width:620px;height:620px;background:radial-gradient(circle,#2873cc,transparent 70%);top:-180px;left:-120px;animation:drift1 22s ease-in-out infinite}
+  .a2{width:540px;height:540px;background:radial-gradient(circle,#2f84c2,transparent 70%);bottom:-160px;right:-100px;animation:drift2 26s ease-in-out infinite}
+  .a3{width:420px;height:420px;background:radial-gradient(circle,#4d98ce,transparent 72%);top:40%;left:55%;opacity:.28;animation:drift3 30s ease-in-out infinite}
+  @keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(120px,80px) scale(1.15)}}
+  @keyframes drift2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-100px,-70px) scale(1.1)}}
+  @keyframes drift3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-80px,40px) scale(1.2)}}
+  .grid-overlay{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(var(--line-soft) 1px,transparent 1px),linear-gradient(90deg,var(--line-soft) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(ellipse 80% 70% at 50% 30%,#000 40%,transparent 100%);opacity:.35}
+  header{position:relative;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:22px 40px;max-width:1180px;margin:0 auto}
+  .brand{display:flex;align-items:center;gap:12px;font-family:var(--font-display);font-weight:700;font-size:19px;letter-spacing:-.01em}
+  .brand .mark{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--green),var(--green-deep));box-shadow:0 6px 20px rgba(77,152,206,.35)}
+  .brand .mark svg{width:19px;height:19px}
+  .brand small{display:block;font-family:var(--font-body);font-weight:500;font-size:11px;color:var(--ink-faint);letter-spacing:.04em;margin-top:1px}
+  .user-chip{display:flex;align-items:center;gap:10px;padding:7px 14px 7px 8px;border-radius:100px;background:var(--glass);border:1px solid var(--line-soft);backdrop-filter:blur(12px);font-size:13.5px;color:var(--ink-soft);transition:border-color .3s,transform .3s}
+  .user-chip:hover{border-color:var(--line);transform:translateY(-1px)}
+  .avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--blue-deep));display:grid;place-items:center;font-weight:600;font-size:12px;color:#fff}
+  .user-chip b{color:var(--ink);font-weight:600}
+  main{position:relative;z-index:5;max-width:760px;margin:0 auto;padding:36px 24px 80px}
+  .intro{text-align:center;margin-bottom:38px;animation:rise .8s cubic-bezier(.2,.7,.2,1) both}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--green-bright);font-weight:600;letter-spacing:.02em;padding:6px 14px;border-radius:100px;background:rgba(77,152,206,.08);border:1px solid var(--line);margin-bottom:18px}
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--green-bright);box-shadow:0 0 10px var(--green-bright);animation:pulse 2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  h1{font-family:var(--font-display);font-size:38px;font-weight:700;letter-spacing:-.025em;line-height:1.08}
+  .intro p{margin-top:14px;font-size:16px;color:var(--ink-soft);line-height:1.6;max-width:500px;margin-inline:auto}
+  .steps{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:30px}
+  .step-node{display:flex;align-items:center}
+  .bead{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:600;font-size:13.5px;background:var(--glass-strong);border:1.5px solid var(--line-soft);color:var(--ink-faint);transition:all .45s cubic-bezier(.2,.7,.2,1);position:relative}
+  .bead.active{border-color:var(--green);color:var(--navy-0);background:linear-gradient(135deg,var(--green-bright),var(--green));box-shadow:0 0 0 5px rgba(77,152,206,.14),0 8px 22px rgba(77,152,206,.35)}
+  .bead.done{border-color:var(--green-deep);background:rgba(77,152,206,.16);color:var(--green-bright)}
+  .bead svg{width:15px;height:15px}
+  .rail{width:56px;height:2px;background:var(--line-soft);position:relative;overflow:hidden}
+  .rail i{position:absolute;inset:0;background:linear-gradient(90deg,var(--green),var(--green-bright));transform:scaleX(0);transform-origin:left;transition:transform .5s ease}
+  .rail.filled i{transform:scaleX(1)}
+  .card{position:relative;background:var(--glass);border:1px solid var(--line-soft);border-radius:var(--radius);backdrop-filter:blur(20px);padding:34px 34px 30px;overflow:hidden;box-shadow:0 30px 80px -30px rgba(0,0,0,.8)}
+  .card::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent)}
+  .panel{display:none;animation:swap .5s cubic-bezier(.2,.7,.2,1) both}
+  .panel.on{display:block}
+  @keyframes swap{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  @keyframes rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+  .panel h2{font-family:var(--font-display);font-size:21px;font-weight:600;letter-spacing:-.01em;margin-bottom:6px}
+  .panel .sub{font-size:14px;color:var(--ink-faint);margin-bottom:24px}
+  .tiles{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .tile{text-align:left;cursor:pointer;padding:18px;border-radius:14px;background:var(--glass-strong);border:1.5px solid var(--line-soft);transition:all .3s cubic-bezier(.2,.7,.2,1);position:relative;overflow:hidden;color:var(--ink)}
+  .tile:hover{transform:translateY(-3px);border-color:var(--line);box-shadow:0 16px 40px -20px rgba(0,0,0,.7)}
+  .tile.sel{border-color:var(--green);background:rgba(77,152,206,.09)}
+  .tile.sel::after{content:"";position:absolute;top:14px;right:14px;width:18px;height:18px;border-radius:50%;background:var(--green);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23050f22' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");background-size:12px;background-repeat:no-repeat;background-position:center}
+  .tile .ic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;margin-bottom:12px;background:rgba(90,166,216,.14);color:var(--blue)}
+  .tile.sel .ic{background:rgba(77,152,206,.18);color:var(--green-bright)}
+  .tile .ic svg{width:20px;height:20px}
+  .tile b{display:block;font-family:var(--font-display);font-weight:600;font-size:14.5px;margin-bottom:3px;color:var(--ink)}
+  .tile span{font-size:12px;color:var(--ink-soft);line-height:1.45}
+  .field{margin-bottom:20px}
+  .field label{display:block;font-size:13px;font-weight:600;color:var(--ink-soft);margin-bottom:8px}
+  .field label .req{color:var(--green-bright)}
+  .field label .opt{color:var(--ink-faint);font-weight:500}
+  .input,.textarea,select{width:100%;font-family:var(--font-body);font-size:14.5px;color:var(--ink);background:var(--glass-strong);border:1.5px solid var(--line-soft);border-radius:12px;padding:13px 15px;transition:border-color .25s,box-shadow .25s,background .25s;outline:none}
+  .textarea{resize:vertical;min-height:120px;line-height:1.55}
+  .input::placeholder,.textarea::placeholder{color:var(--ink-faint)}
+  .input:focus,.textarea:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 4px rgba(77,152,206,.12);background:rgba(12,32,64,.9)}
+  select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a9bcd6' stroke-width='2.2' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;background-size:16px;padding-right:40px}
+  select option{background:var(--navy-1);color:var(--ink)}
+  .err{color:#ff8b7d;font-size:12.5px;margin-top:6px;display:none}
+  .field.invalid .input,.field.invalid .textarea,.field.invalid select{border-color:rgba(255,139,125,.6)}
+  .field.invalid .err{display:block}
+  .pills{display:flex;gap:10px;flex-wrap:wrap}
+  .pill{flex:1;min-width:110px;cursor:pointer;text-align:center;padding:13px 10px;border-radius:12px;background:var(--glass-strong);border:1.5px solid var(--line-soft);transition:all .25s;font-size:13.5px;font-weight:500}
+  .pill:hover{border-color:var(--line);transform:translateY(-2px)}
+  .pill.sel{border-color:var(--pc,var(--green));background:var(--pcbg,rgba(77,152,206,.1));color:#fff}
+  .pill .lvl{display:block;font-family:var(--font-display);font-weight:600;font-size:14.5px;margin-bottom:2px}
+  .pill small{color:var(--ink-faint);font-size:11.5px}
+  .drop{border:1.5px dashed var(--line-soft);border-radius:14px;padding:24px;text-align:center;cursor:pointer;transition:all .3s;background:var(--glass-strong)}
+  .drop:hover{border-color:var(--green);background:rgba(77,152,206,.05)}
+  .drop .di{width:44px;height:44px;border-radius:12px;margin:0 auto 12px;display:grid;place-items:center;background:rgba(90,166,216,.14);color:var(--blue)}
+  .drop .di svg{width:22px;height:22px}
+  .drop b{font-family:var(--font-display);font-size:14.5px;font-weight:600}
+  .drop p{font-size:12.5px;color:var(--ink-faint);margin-top:5px}
+  .drop.has{border-style:solid;border-color:var(--green);background:rgba(77,152,206,.07)}
+  .filechip{display:none;align-items:center;gap:10px;margin-top:12px;padding:11px 14px;border-radius:11px;background:var(--glass-strong);border:1px solid var(--line);font-size:13.5px}
+  .filechip.show{display:flex}
+  .filechip .fx{margin-left:auto;cursor:pointer;color:var(--ink-faint);width:20px;height:20px;display:grid;place-items:center;border-radius:6px;transition:all .2s}
+  .filechip .fx:hover{background:rgba(255,107,94,.15);color:#ff6b5e}
+  .ack{display:flex;align-items:flex-start;gap:14px;padding:18px;border-radius:14px;background:var(--glass-strong);border:1.5px solid var(--line-soft);cursor:pointer;transition:all .28s}
+  .ack:hover{border-color:var(--line)}
+  .ack.on{border-color:var(--green);background:rgba(77,152,206,.08)}
+  .ack .box{flex-shrink:0;width:24px;height:24px;border-radius:7px;border:2px solid var(--line-soft);display:grid;place-items:center;transition:all .25s;margin-top:1px}
+  .ack.on .box{background:var(--green);border-color:var(--green)}
+  .ack .box svg{width:14px;height:14px;opacity:0;transform:scale(.5);transition:all .25s}
+  .ack.on .box svg{opacity:1;transform:scale(1)}
+  .ack .txt{font-size:14px;line-height:1.5;color:var(--ink-soft)}
+  .ack .txt b{color:var(--ink);font-weight:600;display:block;font-family:var(--font-display);margin-bottom:2px}
+  .review-row{display:flex;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid var(--line-soft);font-size:14px}
+  .review-row:last-child{border-bottom:none}
+  .review-row .k{color:var(--ink-faint);font-weight:500;flex-shrink:0}
+  .review-row .v{color:var(--ink);font-weight:500;text-align:right;max-width:64%}
+  .badge{display:inline-block;padding:3px 11px;border-radius:100px;font-size:12px;font-weight:600}
+  .actions{display:flex;align-items:center;justify-content:space-between;margin-top:28px;gap:14px}
+  .btn{font-family:var(--font-display);font-weight:600;font-size:14.5px;cursor:pointer;border:none;border-radius:12px;padding:13px 26px;transition:all .28s cubic-bezier(.2,.7,.2,1);display:inline-flex;align-items:center;gap:9px}
+  .btn-ghost{background:transparent;color:var(--ink-soft);border:1.5px solid var(--line-soft)}
+  .btn-ghost:hover{border-color:var(--line);color:var(--ink);transform:translateX(-2px)}
+  .btn-ghost:disabled{opacity:0;pointer-events:none}
+  .btn-next{background:linear-gradient(135deg,var(--green-bright),var(--green));color:var(--navy-0);box-shadow:0 10px 30px -8px rgba(77,152,206,.5)}
+  .btn-next:hover{transform:translateY(-2px);box-shadow:0 16px 40px -8px rgba(77,152,206,.65)}
+  .btn-next svg{transition:transform .28s}
+  .btn-next:hover svg{transform:translateX(3px)}
+  .btn-submit{background:linear-gradient(135deg,var(--green-bright),var(--green-deep));color:var(--navy-0)}
+  .success{text-align:center;padding:20px 10px}
+  .success .ring{width:88px;height:88px;border-radius:50%;margin:0 auto 22px;display:grid;place-items:center;background:rgba(77,152,206,.12);border:2px solid var(--green);animation:pop .6s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes pop{0%{transform:scale(.5);opacity:0}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+  .success .ring svg{width:44px;height:44px;stroke-dasharray:60;stroke-dashoffset:60;animation:draw .5s .3s ease forwards}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  .success h2{font-family:var(--font-display);font-size:24px;margin-bottom:10px}
+  .success p{color:var(--ink-soft);font-size:15px;line-height:1.6;max-width:420px;margin:0 auto 8px}
+  .ticket{display:inline-flex;align-items:center;gap:10px;margin-top:18px;padding:12px 20px;border-radius:12px;background:var(--glass-strong);border:1px solid var(--line);font-family:var(--font-display)}
+  .ticket .tid{color:var(--green-bright);font-weight:700;letter-spacing:.02em}
+  .footnote{text-align:center;margin-top:26px;font-size:12.5px;color:var(--ink-faint)}
+  .footnote svg{width:13px;height:13px;vertical-align:-2px;margin-right:4px}
+  @media (max-width:560px){header{padding:18px 20px}h1{font-size:29px}.card{padding:26px 20px}.tiles{grid-template-columns:1fr}.rail{width:26px}}
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001s!important;transition-duration:.05s!important}}
+</style>
+</head>
+<body>
+<div class="aurora"><span class="a1"></span><span class="a2"></span><span class="a3"></span></div>
+<div class="grid-overlay"></div>
+
+<header>
+  <div class="brand">
+    <span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="#050f22" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg></span>
+    <div>ClickLearn<small>DevOps &amp; IT Access</small></div>
+  </div>
+  <div class="user-chip">
+    <span class="avatar">RA</span>
+    <span>Signed in as <b>Rahul A.</b></span>
+  </div>
+</header>
+
+<main>
+  <div class="intro">
+    <span class="eyebrow"><span class="dot"></span>DevOps &amp; IT support · clicklearn.com</span>
+    <h1>Submit a request</h1>
+    <p>Request licenses, software access, Azure DevOps roles, permissions, or general IT support. It lands straight on the DevOps board.</p>
+  </div>
+
+  <div class="steps" id="steps">
+    <div class="step-node"><div class="bead active" data-b="0">1</div></div>
+    <div class="rail" data-r="0"><i></i></div>
+    <div class="step-node"><div class="bead" data-b="1">2</div></div>
+    <div class="rail" data-r="1"><i></i></div>
+    <div class="step-node"><div class="bead" data-b="2">3</div></div>
+    <div class="rail" data-r="2"><i></i></div>
+    <div class="step-node"><div class="bead" data-b="3">4</div></div>
+  </div>
+
+  <div class="card">
+    <!-- STEP 1: request type + title -->
+    <section class="panel on" data-p="0">
+      <h2>What do you need?</h2>
+      <p class="sub">Pick a request type, then give it a short title.</p>
+      <div class="tiles" id="types">
+        <button class="tile" data-type="New license">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 5c0 1.66 4 3 9 3s9-1.34 9-3-4-3-9-3-9 1.34-9 3z"/></svg></span>
+          <b>New license</b><span>Request a software license</span>
+        </button>
+        <button class="tile" data-type="Software access">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h6"/></svg></span>
+          <b>Software access</b><span>Access to an app or tool</span>
+        </button>
+        <button class="tile" data-type="Azure DevOps role">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.4 8.5 8 10 4.6-1.5 8-5 8-10V5z"/><path d="M9 12l2 2 4-4"/></svg></span>
+          <b>Azure DevOps role</b><span>Board, repo or pipeline role</span>
+        </button>
+        <button class="tile" data-type="Permissions">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+          <b>Permissions</b><span>Elevated or scoped rights</span>
+        </button>
+        <button class="tile" data-type="General IT support">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15V9a8 8 0 0 1 16 0v6"/><path d="M4 15a2 2 0 0 0 2 2h1v-6H6a2 2 0 0 0-2 2zM20 15a2 2 0 0 1-2 2h-1v-6h1a2 2 0 0 1 2 2z"/></svg></span>
+          <b>General IT support</b><span>Anything else IT-related</span>
+        </button>
+        <button class="tile" data-type="Hardware">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span>
+          <b>Hardware</b><span>Laptop, device or peripheral</span>
+        </button>
+      </div>
+      <div class="field" style="margin-top:22px" id="fTitle">
+        <label>Title <span class="req">*</span></label>
+        <input class="input" id="title" placeholder="e.g. Contributor access to Platform repo" maxlength="120">
+        <div class="err">Please add a short title.</div>
+      </div>
+    </section>
+
+    <!-- STEP 2: description + justification -->
+    <section class="panel" data-p="1">
+      <h2>Tell us the details</h2>
+      <p class="sub">The clearer the detail, the faster the team can act.</p>
+      <div class="field" id="fDesc">
+        <label>Detailed description of request <span class="req">*</span></label>
+        <textarea class="textarea" id="desc" placeholder="What exactly do you need? Include system names, roles, error messages, links, or anything that helps."></textarea>
+        <div class="err">Please describe your request (at least 10 characters).</div>
+      </div>
+      <div class="field" id="fJust">
+        <label>Business justification / purpose <span class="req">*</span></label>
+        <input class="input" id="just" placeholder="e.g. Needed to deploy the Q3 release pipeline">
+        <div class="err">Please add a business justification.</div>
+      </div>
+    </section>
+
+    <!-- STEP 3: priority + attachment -->
+    <section class="panel" data-p="2">
+      <h2>Priority &amp; attachment</h2>
+      <p class="sub">Set the urgency and add a screenshot or document if it helps.</p>
+      <div class="field" style="margin-bottom:22px">
+        <label>Urgency / priority <span class="req">*</span></label>
+        <div class="pills" id="prio">
+          <div class="pill" data-prio="Low" style="--pc:var(--blue);--pcbg:rgba(90,166,216,.12)"><span class="lvl">Low</span><small>Whenever there's time</small></div>
+          <div class="pill" data-prio="Medium" style="--pc:var(--green);--pcbg:rgba(77,152,206,.12)"><span class="lvl">Medium</span><small>Slows me down</small></div>
+          <div class="pill" data-prio="High" style="--pc:#e6a23c;--pcbg:rgba(230,162,60,.14)"><span class="lvl">High</span><small>Blocking my work</small></div>
+          <div class="pill" data-prio="Critical" style="--pc:#ff6b5e;--pcbg:rgba(255,107,94,.14)"><span class="lvl">Critical</span><small>Whole team down</small></div>
+        </div>
+        <div class="err" id="prioErr">Pick an urgency level.</div>
+      </div>
+      <div class="field">
+        <label>Supporting document / screenshot <span class="opt">(optional · max 10 MB)</span></label>
+        <div class="drop" id="drop">
+          <div class="di"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg></div>
+          <b>Click to upload a file</b>
+          <p>Word, Excel, PPT, PDF, image, video or audio</p>
+        </div>
+        <input type="file" id="file" hidden accept=".doc,.docx,.xls,.xlsx,.ppt,.pptx,.pdf,image/*,video/*,audio/*">
+        <div class="filechip" id="filechip">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green-bright)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+          <span id="fname">file.pdf</span>
+          <span class="fx" id="fclear"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 4: acknowledge + review -->
+    <section class="panel" data-p="3">
+      <h2>Confirm &amp; send</h2>
+      <p class="sub">Review what will be created, then acknowledge to send.</p>
+      <div id="review" style="margin-bottom:22px"></div>
+      <div class="ack" id="ack">
+        <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#050f22" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+        <span class="txt"><b>Acknowledgment</b>I confirm the details are correct and approved by my manager.</span>
+      </div>
+      <div class="err" id="ackErr" style="margin-top:8px">Please acknowledge to continue.</div>
+    </section>
+
+    <!-- SUCCESS -->
+    <section class="panel" data-p="4">
+      <div class="success">
+        <div class="ring"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green-bright)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <h2>Request sent</h2>
+        <p>Your task is on the DevOps board now. You'll get an email as soon as someone picks it up.</p>
+        <div class="ticket"><span style="color:var(--ink-faint)">Work item</span><span class="tid" id="tid">#2041</span></div>
+        <div style="margin-top:26px"><button class="btn btn-ghost" onclick="reset()" style="border-color:var(--line)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 9-9 9 9 0 0 0-6.4 2.6L3 8"/><path d="M3 3v5h5"/></svg>New request</button></div>
+      </div>
+    </section>
+
+    <div class="actions" id="actions">
+      <button class="btn btn-ghost" id="back" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>Back</button>
+      <button class="btn btn-next" id="next">Continue<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+    </div>
+  </div>
+
+  <div class="footnote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Signed in with your ClickLearn Microsoft account · requests go to the DevOps team</div>
+</main>
+
+<script>
+  const state={type:null,title:'',desc:'',just:'',prio:null,file:null,fileData:null,ack:false,contact:''};
+
+  // Pull the signed-in employee from Static Web Apps auth (Entra ID)
+  (async function loadUser(){
+    try{
+      const r=await fetch('/.auth/me');
+      const d=await r.json();
+      const p=d && d.clientPrincipal;
+      if(p){
+        const email=p.userDetails||'';
+        const nameClaim=(p.claims||[]).find(c=>c.typ==='name'||/identity\/claims\/name$/.test(c.typ));
+        const name=nameClaim?nameClaim.val:email;
+        state.contact=email;
+        const initials=name.split(/[\s@.]+/).filter(Boolean).slice(0,2).map(s=>s[0].toUpperCase()).join('');
+        document.querySelector('.avatar').textContent=initials||'CL';
+        document.querySelector('.user-chip span:last-child').innerHTML='Signed in as <b>'+esc(name)+'</b>';
+      }
+    }catch(e){/* prototype/offline: keep placeholder */}
+  })();
+  let step=0;
+  const panels=[...document.querySelectorAll('.panel')];
+  const beads=[...document.querySelectorAll('.bead')];
+  const rails=[...document.querySelectorAll('.rail')];
+  const back=document.getElementById('back');
+  const next=document.getElementById('next');
+  const actions=document.getElementById('actions');
+
+  document.querySelectorAll('.tile').forEach(t=>t.addEventListener('click',()=>{
+    document.querySelectorAll('.tile').forEach(x=>x.classList.remove('sel'));
+    t.classList.add('sel');state.type=t.dataset.type;
+  }));
+  document.querySelectorAll('.pill').forEach(p=>p.addEventListener('click',()=>{
+    document.querySelectorAll('.pill').forEach(x=>x.classList.remove('sel'));
+    p.classList.add('sel');state.prio=p.dataset.prio;
+    document.getElementById('prioErr').style.display='none';
+  }));
+  ['title','desc','just'].forEach(id=>document.getElementById(id).addEventListener('input',e=>e.target.closest('.field').classList.remove('invalid')));
+
+  const drop=document.getElementById('drop'),fileIn=document.getElementById('file'),chip=document.getElementById('filechip');
+  drop.addEventListener('click',()=>fileIn.click());
+  fileIn.addEventListener('change',()=>{
+    if(fileIn.files[0]){
+      const f=fileIn.files[0];
+      if(f.size>10*1024*1024){alert('File exceeds 10 MB limit.');fileIn.value='';return;}
+      state.file=f.name;document.getElementById('fname').textContent=f.name;
+      chip.classList.add('show');drop.classList.add('has');
+      const reader=new FileReader();
+      reader.onload=()=>{state.fileData=String(reader.result).split(',')[1]||null;};
+      reader.readAsDataURL(f);
+    }
+  });
+  document.getElementById('fclear').addEventListener('click',e=>{
+    e.stopPropagation();state.file=null;fileIn.value='';chip.classList.remove('show');drop.classList.remove('has');
+  });
+
+  const ack=document.getElementById('ack');
+  ack.addEventListener('click',()=>{
+    state.ack=!state.ack;ack.classList.toggle('on',state.ack);
+    if(state.ack)document.getElementById('ackErr').style.display='none';
+  });
+
+  function show(n){
+    panels.forEach(p=>p.classList.toggle('on',+p.dataset.p===n));
+    beads.forEach((b,i)=>{b.classList.toggle('active',i===n);b.classList.toggle('done',i<n);
+      b.innerHTML=i<n?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>':(i+1);});
+    rails.forEach((r,i)=>r.classList.toggle('filled',i<n));
+    back.disabled=n===0;
+    if(n>=4){actions.style.display='none';return;}
+    actions.style.display='flex';
+    next.innerHTML=n===3
+      ?'Send request<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg>'
+      :'Continue<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+    next.className=n===3?'btn btn-submit':'btn btn-next';
+    step=n;
+  }
+
+  function validate(n){
+    if(n===0){
+      state.title=document.getElementById('title').value.trim();
+      if(state.title.length<3){document.getElementById('fTitle').classList.add('invalid');return false;}
+    }
+    if(n===1){
+      let ok=true;
+      state.desc=document.getElementById('desc').value.trim();
+      state.just=document.getElementById('just').value.trim();
+      if(state.desc.length<10){document.getElementById('fDesc').classList.add('invalid');ok=false;}
+      if(state.just.length<3){document.getElementById('fJust').classList.add('invalid');ok=false;}
+      return ok;
+    }
+    if(n===2){if(!state.prio){document.getElementById('prioErr').style.display='block';return false;}}
+    if(n===3){if(!state.ack){document.getElementById('ackErr').style.display='block';return false;}}
+    return true;
+  }
+
+  const prioColors={Low:'var(--blue)',Medium:'var(--green)',High:'#e6a23c',Critical:'#ff6b5e'};
+  const prioBg={Low:'rgba(90,166,216,.15)',Medium:'rgba(77,152,206,.15)',High:'rgba(230,162,60,.18)',Critical:'rgba(255,107,94,.18)'};
+  function buildReview(){
+    document.getElementById('review').innerHTML=`
+      <div class="review-row"><span class="k">Request type</span><span class="v">${state.type||'General IT support'}</span></div>
+      <div class="review-row"><span class="k">Title</span><span class="v">${esc(state.title)}</span></div>
+      <div class="review-row"><span class="k">Description</span><span class="v">${esc(state.desc)}</span></div>
+      <div class="review-row"><span class="k">Justification</span><span class="v">${esc(state.just)}</span></div>
+      <div class="review-row"><span class="k">Priority</span><span class="v"><span class="badge" style="color:${prioColors[state.prio]};background:${prioBg[state.prio]}">${state.prio}</span></span></div>
+      ${state.file?`<div class="review-row"><span class="k">Attachment</span><span class="v">${esc(state.file)}</span></div>`:''}
+      <div class="review-row"><span class="k">Requested by</span><span class="v">${state.contact}</span></div>`;
+  }
+  function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+
+  next.addEventListener('click',()=>{
+    if(!validate(step))return;
+    if(step===2)buildReview();
+    if(step===3){submit();return;}
+    show(step+1);
+  });
+  back.addEventListener('click',()=>{if(step>0)show(step-1);});
+
+  function submit(){
+    next.innerHTML='Sending…';next.disabled=true;
+    const payload={
+      requestType:state.type||'General IT support',
+      title:state.title,
+      description:state.desc,
+      justification:state.just,
+      priority:state.prio,
+      attachment:(state.file&&state.fileData)?{name:state.file,contentBase64:state.fileData}:null
+    };
+    fetch('/api/createWorkItem',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload)
+    })
+    .then(async r=>{
+      const d=await r.json().catch(()=>({}));
+      if(!r.ok)throw new Error(d.error||'Something went wrong.');
+      document.getElementById('tid').textContent='#'+d.id;
+      const t=document.querySelector('.ticket');
+      if(d.url){t.style.cursor='pointer';t.title='Open on the board';t.onclick=()=>window.open(d.url,'_blank');}
+      show(4);next.disabled=false;
+    })
+    .catch(err=>{
+      next.disabled=false;
+      next.innerHTML='Send request<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg>';
+      let e=document.getElementById('submitErr');
+      if(!e){e=document.createElement('div');e.id='submitErr';e.className='err';e.style.display='block';e.style.textAlign='center';e.style.marginTop='14px';document.getElementById('actions').insertAdjacentElement('beforebegin',e);}
+      e.textContent=err.message;e.style.display='block';
+    });
+  }
+
+  function reset(){
+    Object.assign(state,{type:null,title:'',desc:'',just:'',prio:null,file:null,fileData:null,ack:false});
+    document.querySelectorAll('.tile,.pill').forEach(x=>x.classList.remove('sel'));
+    ['title','desc','just'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('ack').classList.remove('on');
+    chip.classList.remove('show');drop.classList.remove('has');fileIn.value='';
+    show(0);
+  }
+  window.reset=reset;
+</script>
+</body>
+</html>

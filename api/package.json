@@ -1,0 +1,7 @@
+{
+  "name": "clicklearn-helpdesk-api",
+  "version": "1.0.0",
+  "description": "Azure Functions API that creates Azure DevOps tasks from helpdesk requests",
+  "main": "createWorkItem/index.js",
+  "engines": { "node": ">=18" }
+}
