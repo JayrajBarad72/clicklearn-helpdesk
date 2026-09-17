@@ -422,8 +422,9 @@
       body:JSON.stringify(payload)
     })
     .then(async r=>{
-      const d=await r.json().catch(()=>({}));
-      if(!r.ok)throw new Error(d.error||'Something went wrong.');
+      let d={};
+      try{d=await r.json();}catch(e){d={error:'Server returned an unreadable response ('+r.status+').'};}
+      if(!r.ok)throw new Error(d.error||('Request failed ('+r.status+').'));
       document.getElementById('tid').textContent='#'+d.id;
       const t=document.querySelector('.ticket');
       if(d.url){t.style.cursor='pointer';t.title='Open on the board';t.onclick=()=>window.open(d.url,'_blank');}

@@ -1,5 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/staticwebapp.config.json",
+  "platform": { "apiRuntime": "node:18" },
   "routes": [
     { "route": "/", "rewrite": "/index.html" },
     { "route": "/request", "rewrite": "/request.html" },
